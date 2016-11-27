@@ -92,7 +92,6 @@ namespace XSharpx {
     public static Op<A> Read(Func<int, A> f) =>
       new Op<A>(f.Left<Func<int, A>, Func<string, A>>().Left<Either<Func<int, A>, Func<string, A>>, WriteOp<A>>()); /// new Op<A>(f.Left<Func<int, A>, WriteOp<A>>());
 
-
     public static Op<A> ReadLine(Func<string, A> f) =>
       new Op<A>(f.Right<Func<int, A>, Func<string, A>>().Left<Either<Func<int, A>, Func<string, A>>, WriteOp<A>>()); /// new Op<A>(f.Left<Func<int, A>, WriteOp<A>>());
 
