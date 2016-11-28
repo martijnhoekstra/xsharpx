@@ -1,4 +1,5 @@
 version: '1.0.{build}'
+image: Visual Studio 2017 RC
 configuration:
 - Debug
 - Release
@@ -9,12 +10,12 @@ environment:
 init:
 - ps: $Env:LABEL = "CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
 before_build:
-- appveyor-retry dotnet restore -v Minimal
+- appveyor-retry dotnet restore "src\XSharpx\XSharpx.csproj"
 build_script:
-- dotnet build "src\XSharpx" -c %CONFIGURATION% --no-dependencies --version-suffix %LABEL%
+- dotnet build "src\XSharpx\XSharpx.csproj" -c %CONFIGURATION% --no-dependencies --version-suffix %LABEL%
 after_build:
-- dotnet pack "src\XSharpx" -c %CONFIGURATION% --no-build --version-suffix %LABEL% -o artifacts
+- dotnet pack "src\XSharpx\XSharpx.csproj" -c %CONFIGURATION% --no-build --version-suffix %LABEL% -o artifacts
 artifacts:
-- path: artifacts\**\*.*
+- path: src\**\artifacts\**\*.*
 cache:
 - '%USERPROFILE%\.nuget\packages'
