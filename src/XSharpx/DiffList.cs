@@ -21,7 +21,7 @@ namespace XSharpx {
 
     public A HeadOr(Func<A> a) => Head.ValueOr(a);
 
-    public List<A> TailOr(Func<List<A>> a) =>Tail.ValueOr(a);
+    public List<A> TailOr(Func<List<A>> a) => Tail.ValueOr(a);
 
     public bool IsEmpty => ToList.IsEmpty;
 
@@ -72,7 +72,7 @@ namespace XSharpx {
         this.e = e;
       }
 
-      public void Dispose() {}
+      public void Dispose() { }
 
       public void Reset() {
         e.Reset();
@@ -100,7 +100,6 @@ namespace XSharpx {
 
     public static DiffList<C> SelectMany<A, B, C>(this DiffList<A> ps, Func<A, DiffList<B>> p, Func<A, B, C> f) =>
       SelectMany(ps, a => Select(p(a), b => f(a, b)));
-    
 
     public static DiffList<B> Apply<A, B>(this DiffList<Func<A, B>> f, DiffList<A> o) =>
       f.ProductWith<A, B>(o, a => b => a(b));
