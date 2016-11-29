@@ -8,14 +8,15 @@ environment:
   # Don't report back to the mothership
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
 init:
-- ps: $Env:LABEL = "CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
+  #environment var APPVEYRO_REPO_TAG seems to spuriously evaluate to true
+- ps: $Env:LABEL = If ($Env:APPVEYOR_REPO_TAG_NAME) { "" } else {"CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")}
 before_build:
 - appveyor-retry dotnet restore "src\XSharpx\XSharpx.csproj"
 build_script:
-- dotnet build "src\XSharpx\XSharpx.csproj" -c %CONFIGURATION% --no-dependencies --version-suffix %LABEL%
+- dotnet msbuild "src\XSharpx\XSharpx.csproj" -property:c=%CONFIGURATION% -property:VersionSuffix=%LABEL%
 after_build:
-- dotnet pack "src\XSharpx\XSharpx.csproj" -c %CONFIGURATION% --no-build --version-suffix %LABEL% -o artifacts
+- dotnet msbuild "src\XSharpx\XSharpx.csproj" -target:pack -property:configuration=%CONFIGURATION% -property:VersionSuffix=%LABEL% -property:o=artifacts -verbosity:detailed
 artifacts:
-- path: src\**\artifacts\**\*.*
+- path: .\**\.nupkg
 cache:
 - '%USERPROFILE%\.nuget\packages'
