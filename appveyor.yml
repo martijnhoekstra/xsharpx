@@ -13,6 +13,10 @@
     # Don't report back to the mothership
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
   init:
+    # Checking whether APPVEYOR_REPO_TAG_NAME is empty (thus falsy) is less clumsy than checking whether
+    # APPVEYOR_REPO_TAG contains the string "true" or "false"
+    # TODO: Since this should only trigger on master, there should never be a tag here, and we can just
+    # default to the ci build number prefix to mark all packages a non-stable. Need to validate whether that's true
     - ps: $Env:LABEL = If ($Env:APPVEYOR_REPO_TAG_NAME) { "" } else {"CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")}
   before_build:
     - appveyor-retry dotnet restore "src\XSharpx\XSharpx.csproj"
@@ -25,12 +29,14 @@
   nuget:
     account_feed: true
     project_feed: true
+    disable_publish_on_pr: true
 
-# "fall back" configuration for all other branches/tags
-# no "branches" section defined
-# deploy on tag
+# This configuration is triggered on anything that isn't the branch "master"
+# Note that tags are not "master", and tags are used to trigger a deploy
+# That means that we have to build release packagages on this configuration
+# Don't automatically publish them to the account and project feeds
+# and deploy them iff it's a tag
 -
-  version: '1.0.{build}'
   image: Visual Studio 2017 RC
   cache:
     - '%USERPROFILE%\.nuget\packages'
@@ -40,6 +46,8 @@
     # Don't report back to the mothership
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
   init:
+    # Checking whether APPVEYOR_REPO_TAG_NAME is empty (thus falsy) is less clumsy than checking whether
+    # APPVEYOR_REPO_TAG contains the string "true" or "false"
     - ps: $Env:LABEL = If ($Env:APPVEYOR_REPO_TAG_NAME) { "" } else {"CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")}
   before_build:
     - appveyor-retry dotnet restore "src\XSharpx\XSharpx.csproj"
